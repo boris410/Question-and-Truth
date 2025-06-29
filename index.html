@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>提問與真相－test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>提問與真相 - 撲克牌推理遊戲</title>
+<link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="main-area">
+  <div class="game-mask fade-in ">
+    <div class="guide-carousel">
+        <div class="guide-wrapper">
+          <div class="guide-slide">遊戲開始將隨機產生一組 8 張撲克牌牌組<br>玩家必須根據提示線索推測真相</div>
+          <div class="guide-slide">牌組規則：花色之間沒有大小順序<br>但是數字必須依花色排序<br>依循右到左，小到大</div>
+           <div class="guide-slide showExp">例如第一組♠８比♠７大<br>必須在♠７後面<br><br>
+          </div>
+          <div class="guide-slide showOtherExp">當然以下也是對的<br>只要花色之間由小到大
+          </div>
+          <div class="guide-slide">最後遊戲中字母牌指的是<br>Ａ、Ｊ、Ｑ、Ｋ<br>代表的點數分別是<br>1、11、12、13</div>
+          <div class="guide-slide">
+            以上～準備好了就開始吧！！！
+            <button onclick="generateCards()">開始遊戲</button>
+          </div>
+        </div>
+        <div class="carousel-btn">
+          <button class="prev">←</button>
+          <button class="next">→</button>
+        </div>
+    </div>
+    <div class="carousel-dots"></div>
+  </div> 
+  <div class="game-area hidden">
+    <div class="question-section">
+      <div class="question-box">
+        <h2>總和</h2>
+        <ul>
+          <li class="hint-select" data-hintopt="110">指定三張個位置的牌總和</li>
+          <li class="hint-select" data-hintopt="120">指定花色牌總和</li>
+          <li class="hint-select" data-hintopt="140">數字牌的總和</li>
+          <li class="hint-select" data-hintopt="150">字母牌的總和</li>
+        </ul>
+      </div>
+      <div class="question-box">
+        <h2>數量</h2>
+        <ul>
+          <li class="hint-select" data-hintopt="230">指定 數字/字母 的數量</li>
+          <li class="hint-select" data-hintopt="240">數字牌的數量</li>
+          <li class="hint-select" data-hintopt="250">字母牌的數量</li>
+        </ul>
+      </div>
+      <div class="question-box">
+        <h2>位置</h2>
+        <ul>
+          <li class="hint-select" data-hintopt="321">指定一種花色牌的位置</li>
+          <li class="hint-select" data-hintopt="361">相同數字/字母的位置</li>
+          <li class="hint-select" data-hintopt="371">連續數字/花色的位置</li>
+          <li class="hint-select" data-hintopt="381">最大/最小數字的位置</li>
+        </ul>
+      </div>
+    </div>
+    <button class="submit-btn-pre">提出真相</button>
+  </div>
+  <div class="hint-card ans-slot hidden"></div>
+  <div class="hint-card pick-ans hidden">
+    <div class="card-display">
+      <div class="card-slot">A</div>
+      <div class="card-slot">2</div>
+      <div class="card-slot">3</div>
+      <div class="card-slot">4</div>
+      <div class="card-slot">5</div>
+      <div class="card-slot">6</div>
+      <div class="card-slot">7</div>
+      <div class="card-slot">8</div>
+      <div class="card-slot">9</div>
+      <div class="card-slot">10</div>
+      <div class="card-slot">J</div>
+      <div class="card-slot">Q</div>
+      <div class="card-slot">K</div>
+    </div>
+   </div>
+  <div class="hint-card hint-chose title hidden"></div>
+  <div class="hint-card hint-chose position hidden">
+    <div class="card-display" id="cardDisplay">
+      <div class="card-slot" data-value="1">1</div>
+      <div class="card-slot" data-value="2">2</div>
+      <div class="card-slot" data-value="3">3</div>
+      <div class="card-slot" data-value="4">4</div>
+      <div class="card-slot" data-value="5">5</div>
+      <div class="card-slot" data-value="6">6</div>
+      <div class="card-slot" data-value="7">7</div>
+      <div class="card-slot" data-value="8">8</div>
+    </div>
+  </div>
+  <div class="hint-card hint-chose suit hidden">
+    <div class="card-display" id="cardDisplay">
+      <div class="card-slot" data-value="0">♠️</div>
+      <div class="card-slot" data-value="1">♥️</div>
+      <div class="card-slot" data-value="2">♦️</div>
+      <div class="card-slot" data-value="3">♣️</div>
+    </div>
+   </div>
+  <div class="hint-card hint-chose mix hidden"></div>
+  <div class="hint-card hint-chose oneoftwo hidden">
+    <div class="card-display" id="cardDisplay">
+      <div class="card-slot a" data-value="a"></div>
+      <div class="card-slot b" data-value="b"></div>
+    </div>
+  </div>
+  <div class="hint-card hint-chose ans hidden">
+    <div class="ans_html"></div>
+  </div>
+  <div class="hint-card hint-chose ans_position hidden">
+    <div class="card-display" id="cardDisplay">
+      <div class="card-slot" data-value="0">1</div>
+      <div class="card-slot" data-value="1">2</div>
+      <div class="card-slot" data-value="2">3</div>
+      <div class="card-slot" data-value="3">4</div>
+      <div class="card-slot" data-value="4">5</div>
+      <div class="card-slot" data-value="5">6</div>
+      <div class="card-slot" data-value="6">7</div>
+      <div class="card-slot" data-value="7">8</div>
+    </div>
+  </div>
+  <button class="hint-chose confirmHint hidden">確認</button>
+  <div hidden class="hintType" data-hinttype="" data-styletype="" data-anstype=""></div>
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
