@@ -1,6 +1,6 @@
 # 提問與真相（Question and Truth）
 
-這是一個基於網頁的互動遊戲，靈感來自《魔鬼的計謀2》冠軍賽，玩家可以透過提問來推理真相。
+這是網頁互動遊戲，靈感來自《魔鬼的計謀2》冠軍賽，玩家可以透過提問來推理真相。
 
 ## 線上體驗
 👉 [點我開始遊戲](https://boris410.github.io/Question-and-Truth/)
@@ -39,9 +39,3 @@
 ## 開發動機
 熟悉 HTML 及 RWD 設計。
 後續會學習React.js Native 將它改為 APP
-
-## 開發與貢獻
-歡迎提出 Issue 或 Pull Request，一起讓專案更好！
-
-## 授權條款
-本專案採用 MIT 授權，詳見 LICENSE 文件。
