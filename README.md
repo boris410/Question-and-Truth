@@ -3,7 +3,7 @@
 這是一個基於網頁的互動遊戲，靈感來自《魔鬼的計謀2》冠軍賽，玩家可以透過提問來推理真相。
 
 ## 線上體驗
-👉 [點我開始遊戲](https://你的帳號.github.io/your-project-name/)
+👉 [點我開始遊戲](https://boris410.github.io/Question-and-Truth/)
 
 ## 技術棧與工具
 - HTML / CSS / JavaScript（原生）
