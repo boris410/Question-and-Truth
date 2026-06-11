@@ -11,6 +11,41 @@ let mainArea;
 let count_time;
 let count_hint = 0;
 let count_error = 0;
+
+// 將答案以混淆形式存放，避免在 localStorage 直接讀到正解
+// 注意：純前端僅能混淆、無法真正保密，僅擋住隨手用 DevTools 抄答案
+const ANS_KEY = "qt_state";
+const ANS_SECRET = 0x5b;
+
+function obfuscate(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b ^ ANS_SECRET);
+  return btoa(bin);
+}
+
+function deobfuscate(b64){
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i) ^ ANS_SECRET;
+  return new TextDecoder().decode(bytes);
+}
+
+function saveAns(cards){
+  localStorage.setItem(ANS_KEY, obfuscate(JSON.stringify(cards)));
+  localStorage.removeItem("ans"); // 清掉舊版明文答案
+}
+
+function loadAns(){
+  const raw = localStorage.getItem(ANS_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(deobfuscate(raw));
+  } catch (e) {
+    return null;
+  }
+}
+
 $(document).ready(function(){
     mainArea = $(".main-area");
     createCardDisplay()
@@ -217,7 +252,7 @@ function generateCards() {
         }
       }
       // 渲染結果（你可根據實際 UI 寫法修改）
-      localStorage.setItem("ans",JSON.stringify(finalCards))
+      saveAns(finalCards)
       createAnsSlot()
       nextStep("game-mask","game-area");
       // renderCards(JSON.parse(localStorage.getItem("ans")));
@@ -312,7 +347,7 @@ function createAnsSlot(){
         if(is_clickLock)return ;
         clickLock(500)
 
-        let ans = JSON.parse(localStorage.getItem("ans"))
+        let ans = loadAns()
         let userAns = $(".ans-slot .card-slot"); 
         let rightCount = 0;
         $.each(userAns,function(key,val){
@@ -584,7 +619,7 @@ function handleHintAns(){
 //計算總和 output: int 
 function getSum(){
   let lastHintAns = 0
-  let ans = JSON.parse(localStorage.getItem("ans"))
+  let ans = loadAns()
   let styletype = getHintType().styletype
   
   if(styletype === '1'){
@@ -607,16 +642,17 @@ function getSum(){
   }
   
   if(styletype === '4'){
-    
+    let template = /^([2-9]|10)$/ ;
     ans.forEach(function(val){
-      if(val.value <= 1 || val.value >= 11 ) return ;
+      if( !template.test(String(val.value)) ) return ;
       lastHintAns += cardValueIndex(val.value)
     })
   }
-  
+
   if(styletype === '5'){
+    let template = /^[AJQK]$/ ;
     ans.forEach(function(val){
-      if(val.value != 1 && val.value < 11 ) return ;
+      if( !template.test(String(val.value)) ) return ;
       lastHintAns += cardValueIndex(val.value)
     })
   }
@@ -627,7 +663,7 @@ function getSum(){
 //計算總數 input: 卡牌點數 A,1,2...K
 function getCount(){
   let lastHintAns = 0
-  let ans = JSON.parse(localStorage.getItem("ans"))
+  let ans = loadAns()
   let styletype = getHintType().styletype
   
   if(styletype === '3'){
@@ -664,7 +700,7 @@ function getCount(){
 //計算位置
 function getPosition(){
   let lastHintAns = 0
-  let ans = JSON.parse(localStorage.getItem("ans"))
+  let ans = loadAns()
   let styletype = getHintType().styletype
   let is_zero = true;
   
@@ -816,7 +852,7 @@ function setHintType(hintopt_num){
 
 //取得提示類型
 function getHintType(){
-  return hintType = {
+  return {
     'hinttype': $(".hintType").attr('data-hinttype'),
     'styletype': $(".hintType").attr('data-styletype'),
     'anstype': $(".hintType").attr('data-anstype'),
@@ -915,7 +951,7 @@ function createScore(){
 function scoreBoardActivate(){
   let timeDiff = Date.now() - count_time  ;
   let seconds = (timeDiff / 1000).toFixed(2);
-  $(".score-times").html(`花費時間   :   <span>${seconds}</sapn>s`)
-  $(".score-error").html(`錯誤次數   :   <span>${count_error}</sapn>`)
+  $(".score-times").html(`花費時間   :   <span>${seconds}</span>s`)
+  $(".score-error").html(`錯誤次數   :   <span>${count_error}</span>`)
   $(".score-hint").html(`提示使用   :   <span>${count_hint}</span>`)
 }

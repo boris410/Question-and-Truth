@@ -1,10 +1,31 @@
+/* ============================================================
+   提問與真相 — Dark Mode (OLED) 主題  [UI Style #07]
+   純黑 #000000 底 + #121212 表面 + 螢光發光強調色 + Inter
+   ※ 僅換視覺，未更動任何 jQuery 依賴的 class 與結構
+   ============================================================ */
+
+:root {
+  --bg:        #000000;   /* 純黑牌桌 (OLED 零耗電/無限對比) */
+  --surface:   #121212;   /* 卡片/表面 */
+  --surface-2: #181818;   /* 表面提亮 */
+  --hairline:  rgba(255, 255, 255, 0.06); /* 極細白邊分層 */
+  --text:      #ededed;
+  --text-dim:  #6b7280;   /* 內文 gray-500 */
+  --green:     #39FF14;   /* 螢光綠：主要動作 / 總和 */
+  --blue:      #0080FF;   /* 藍：數量 */
+  --gold:      #FFD700;   /* 金：位置 */
+  --purple:    #BF00FF;
+}
+
 html, body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f4f4;
+  font-family: 'Inter', 'Arial', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
   margin: 0;
   padding: 0;
   width: 100%;
   box-sizing: border-box;
+  font-weight: 400;
 }
 
 *, *::before, *::after {
@@ -16,18 +37,31 @@ body {
   flex-direction: column;
   align-items: center;
   max-width: 100vw;
+  min-height: 100vh;
   overflow-x: hidden;
+  /* 角落極暗光暈，讓純黑不死板 */
+  background-image:
+    radial-gradient(1200px 600px at 50% -10%, rgba(57, 255, 20, 0.06), transparent 60%),
+    radial-gradient(900px 500px at 100% 110%, rgba(0, 128, 255, 0.05), transparent 60%);
+  background-attachment: fixed;
 }
 
+/* 發光工具 */
+.glow-green { text-shadow: 0 0 20px rgba(57, 255, 20, 0.5); }
+.glow-blue  { text-shadow: 0 0 20px rgba(0, 128, 255, 0.5); }
+.glow-gold  { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+
 header {
-  background-color: #333;
-  color: white;
+  background-color: var(--surface);
+  color: var(--text);
   padding: 1rem 2rem;
   width: 100%;
   text-align: center;
   font-size: 1.5rem;
+  border-bottom: 1px solid var(--hairline);
 }
 
+/* ===================== 選提問區 ===================== */
 .game-area {
   width: 100vw;
   padding: 2rem 1rem;
@@ -41,83 +75,164 @@ header {
 
 .game-area .question-section {
   display: flex;
-  gap: 1rem;
+  gap: 1.25rem;
   justify-content: center;
   margin-bottom: 2rem;
+  width: 100%;
+  max-width: 1100px;
 }
 
 .question-box {
   width: 30%;
-  background-color: #fff;
-  border: 2px solid #ccc;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  padding: 1rem;
+  background-color: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 20px 40px rgba(0, 0, 0, 0.6);
+  padding: 1.25rem 1.25rem 1.5rem;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 
 .question-box h2 {
   margin-top: 0;
   font-size: 2rem;
-  color: #333;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
+/* 三類別各自的螢光色：總和=綠 / 數量=藍 / 位置=金 */
+.question-box:nth-child(1) h2 { color: var(--green); text-shadow: 0 0 20px rgba(57, 255, 20, 0.5); }
+.question-box:nth-child(2) h2 { color: var(--blue);  text-shadow: 0 0 20px rgba(0, 128, 255, 0.5); }
+.question-box:nth-child(3) h2 { color: var(--gold);  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+
+.question-box:nth-child(1):hover { border-color: rgba(57, 255, 20, 0.35);  box-shadow: 0 0 30px rgba(57, 255, 20, 0.12), 0 20px 40px rgba(0, 0, 0, 0.6); transform: translateY(-3px); }
+.question-box:nth-child(2):hover { border-color: rgba(0, 128, 255, 0.35);  box-shadow: 0 0 30px rgba(0, 128, 255, 0.12), 0 20px 40px rgba(0, 0, 0, 0.6); transform: translateY(-3px); }
+.question-box:nth-child(3):hover { border-color: rgba(255, 215, 0, 0.35);   box-shadow: 0 0 30px rgba(255, 215, 0, 0.12), 0 20px 40px rgba(0, 0, 0, 0.6); transform: translateY(-3px); }
+
 .question-box ul {
-  padding-left: 1rem;
+  padding-left: 0;
   margin: 0;
+  list-style: none;
 }
 
 .question-box li {
   margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  color: var(--text);
   cursor: pointer;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: all .2s ease;
 }
+
+.question-box li::before {
+  content: "›";
+  color: var(--text-dim);
+  margin-right: 0.5rem;
+  transition: color .2s ease;
+}
+
+.question-box:nth-child(1) li:hover { background: rgba(57, 255, 20, 0.08);  border-color: rgba(57, 255, 20, 0.3);  color: #fff; }
+.question-box:nth-child(2) li:hover { background: rgba(0, 128, 255, 0.08);  border-color: rgba(0, 128, 255, 0.3);  color: #fff; }
+.question-box:nth-child(3) li:hover { background: rgba(255, 215, 0, 0.08);   border-color: rgba(255, 215, 0, 0.3);   color: #fff; }
+.question-box li:hover::before { color: inherit; }
+
+/* ===================== 按鈕 ===================== */
+button {
+  padding: 0.5rem 1.5rem;
+  font-size: 2rem;
+  font-family: inherit;
+  font-weight: 600;
+  border: 1px solid rgba(57, 255, 20, 0.45);
+  border-radius: 10px;
+  background-color: var(--surface);
+  color: var(--green);
+  cursor: pointer;
+  margin-top: 20px;
+  margin-right: 10px;
+  text-shadow: 0 0 12px rgba(57, 255, 20, 0.45);
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.18);
+  transition: all .2s ease;
+}
+
+button:hover {
+  background-color: var(--surface-2);
+  box-shadow: 0 0 28px rgba(57, 255, 20, 0.45);
+  transform: translateY(-1px);
+}
+
+button:active { transform: translateY(0); }
 
 .submit-btn-pre {
   display: block;
   margin: 50px auto 50px;
-  padding: 0.7rem 2rem;
-  background-color: #4a148c;
-  color: white;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
+  padding: 0.8rem 2.5rem;
+  background-color: var(--surface);
+  color: var(--green);
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: 1px solid rgba(57, 255, 20, 0.5);
+  border-radius: 10px;
   cursor: pointer;
+  text-shadow: 0 0 12px rgba(57, 255, 20, 0.5);
+  box-shadow: 0 0 22px rgba(57, 255, 20, 0.22);
+  transition: all .2s ease;
 }
 
+.submit-btn-pre:hover {
+  background-color: var(--surface-2);
+  box-shadow: 0 0 32px rgba(57, 255, 20, 0.5);
+}
+
+/* JS 動態產生的按鈕 */
+.submit-btn { border-color: rgba(57, 255, 20, 0.5); color: var(--green); text-shadow: 0 0 12px rgba(57, 255, 20, 0.5); box-shadow: 0 0 22px rgba(57, 255, 20, 0.22); }
+.submit-btn-thinkmore { border-color: rgba(255, 215, 0, 0.45); color: var(--gold); text-shadow: 0 0 12px rgba(255, 215, 0, 0.45); box-shadow: 0 0 18px rgba(255, 215, 0, 0.18); }
+.submit-btn-thinkmore:hover { box-shadow: 0 0 28px rgba(255, 215, 0, 0.4); }
+.submit-btn-restart { border-color: rgba(0, 128, 255, 0.45); color: var(--blue); text-shadow: 0 0 12px rgba(0, 128, 255, 0.45); box-shadow: 0 0 18px rgba(0, 128, 255, 0.18); }
+
+/* ===================== 卡牌 ===================== */
+/* 黑色牌桌上「發光的明亮實體卡」：保留 JS 內聯紅/黑花色顏色可讀 */
 .card-display {
   margin-top: 1%;
   display: flex;
   justify-content: center;
   gap: 1rem;
-  flex-wrap:wrap;
-  
+  flex-wrap: wrap;
 }
 
 .card-slot {
   width: 120px;
   height: 170px;
-  background-color: #EBF2FA;
-  border: 2px dashed #aaa;
+  background: linear-gradient(160deg, #ffffff 0%, #eef3fb 100%);
+  border: 1px solid rgba(57, 255, 20, 0.35);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 4rem;
-  border-radius: 8px;
-  color: #444;
+  font-weight: 600;
+  border-radius: 12px;
+  color: #02020A;
+  box-shadow:
+    0 0 18px rgba(57, 255, 20, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 12px 24px rgba(0, 0, 0, 0.6);
   transform: scale(1);
-  transition: transform 1s linear;
+  transition: transform .4s ease, box-shadow .3s ease, background-color .3s ease;
 }
 
-button {
-  padding: 0.5rem 1.5rem;
-  font-size: 2rem;
-  border: none;
-  border-radius: 6px;
-  background-color: #4a148c;
-  color: white;
-  cursor: pointer;
-  margin-top: 20px;
-  margin-right: 10px;
+.card-slot:hover {
+  box-shadow:
+    0 0 26px rgba(57, 255, 20, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 12px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* 選中：螢光金高亮 */
+.card-slot.picked {
+  background: linear-gradient(160deg, #FFF6A0 0%, #F7F052 100%);
+  border-color: rgba(255, 215, 0, 0.9);
+  box-shadow: 0 0 28px rgba(255, 215, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  color: #1a1400;
 }
 
 .hidden {
@@ -135,6 +250,7 @@ button {
   z-index: 1;
 }
 
+/* ===================== 提示卡區 ===================== */
 .hint-card {
   margin-top: 6%;
   text-align: center;
@@ -144,15 +260,17 @@ button {
 
 .hint-card .card-display {
   margin-top: 1rem;
-  margin-bottom:5%;
+  margin-bottom: 5%;
   display: flex;
   justify-content: center;
   gap: 1rem;
 }
 
-.hint-chose.title,.ans {
+.hint-chose.title, .ans {
   font-size: 2rem;
+  font-weight: 600;
   margin-top: 1.5rem;
+  color: var(--text);
 }
 
 .hint-chose.confirmHint {
@@ -161,15 +279,10 @@ button {
   margin-left: 50%;
 }
 
-
-/*game-mask*/
+/* ===================== 開場遮罩 / 教學輪播 ===================== */
 .game-mask {
   width: 100%;
   height: 70%;
-}
-
-.card-slot.picked {
-  background-color: #F7F052;
 }
 
 .guide-carousel {
@@ -180,9 +293,10 @@ button {
   height: 70%;
   max-width: 700px;
   overflow: hidden;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(57, 255, 20, 0.08), 0 24px 60px rgba(0, 0, 0, 0.7);
   padding: 2rem 1rem;
   margin-top: 5%;
 }
@@ -190,14 +304,16 @@ button {
 .guide-slide .card-slot {
   width: 50px;
   height: 75px;
-  background-color: #EBF2FA;
-  border: 2px dashed #aaa;
+  background: linear-gradient(160deg, #ffffff 0%, #eef3fb 100%);
+  border: 1px solid rgba(57, 255, 20, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 1rem;
+  font-weight: 600;
   border-radius: 8px;
-  color: #444;
+  color: #02020A;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.12), 0 6px 12px rgba(0, 0, 0, 0.5);
   transition: all 1s ease;
 }
 
@@ -214,6 +330,8 @@ button {
   justify-content: center;
   align-items: center;
   font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text);
   text-align: center;
   line-height: 2rem;
   user-select: none;
@@ -227,17 +345,29 @@ button {
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #333;
+  color: var(--text);
   z-index: 2;
 }
 
-.carousel-btn.prev {
-  left: 0.5rem;
+/* 輪播左右箭頭：透明、霓虹綠發光，非實心方塊 */
+.carousel-btn button {
+  background: transparent;
+  border: 1px solid var(--hairline);
+  color: var(--green);
+  font-size: 1.5rem;
+  padding: 0.3rem 1.1rem;
+  text-shadow: 0 0 12px rgba(57, 255, 20, 0.5);
+  box-shadow: none;
+}
+.carousel-btn button:hover {
+  background: rgba(57, 255, 20, 0.08);
+  border-color: rgba(57, 255, 20, 0.4);
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.25);
+  transform: none;
 }
 
-.carousel-btn.next {
-  right: 0.5rem;
-}
+.carousel-btn.prev { left: 0.5rem; }
+.carousel-btn.next { right: 0.5rem; }
 
 .carousel-dots {
   display: flex;
@@ -247,29 +377,30 @@ button {
 }
 
 .carousel-dots span {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: #ccc;
+  background: #333;
   display: inline-block;
+  transition: all .3s ease;
 }
 
 .carousel-dots .active {
-  background: #4a148c;
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.7);
 }
 
-
-/*******************/
-
+/* ===================== 提示答案揭示 ===================== */
 .showAns {
   font-size: 2.5rem;
-  font-weight: bold;
-  color: #4a148c;
-  background-color: #f3e5f5;
-  border: 2px solid #ce93d8;
+  font-weight: 700;
+  color: var(--green);
+  background-color: var(--surface);
+  border: 1px solid rgba(57, 255, 20, 0.4);
   padding: 1rem 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  box-shadow: 0 0 30px rgba(57, 255, 20, 0.25);
+  text-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
   display: inline-block;
   text-align: center;
   letter-spacing: 0.2rem;
@@ -281,199 +412,194 @@ button {
   opacity: 0;
 }
 
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.06); }
+}
 
+/* ===================== RWD ===================== */
 @media (max-width: 700px) {
-  .hint-card .card-display{
-    transform: scale(0.9); 
+  .hint-card .card-display {
+    transform: scale(0.9);
     transition: all 1s linear;
     flex-wrap: wrap;
-    
   }
-  .card-slot{
-    max-width:60px;
-    max-height:110px;
-    font-size:2.5rem;
+  .card-slot {
+    max-width: 60px;
+    max-height: 110px;
+    font-size: 2.5rem;
   }
   .guide-slide .card-slot {
     width: 25px;
     height: 45px;
     font-size: 0.8rem;
-    trassition:scale(1);
     transition: all 1s ease;
   }
-   .guide-slide {
-    white-space: normal; 
-    width:100vw;
+  .guide-slide {
+    white-space: normal;
+    width: 100vw;
   }
 }
 
 @media (max-width: 600px) {
-  
   header {
     font-size: 1.2rem;
     padding: 1rem;
   }
-
   .game-area {
     padding: 1rem 0.5rem;
   }
-
+  .game-area .question-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
   .question-box {
     width: 100%;
-    padding: 1rem 0.5rem;
+    padding: 1rem 0.85rem;
     font-size: 1rem;
   }
-
   .question-box h2 {
     font-size: 1.5rem;
   }
-
   .question-box li {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
   }
-
   .submit-btn-pre {
     width: 100%;
     font-size: 1.2rem;
   }
-    
   .pick-ans.card-display .card-slot {
     width: 60px;
     height: 96px;
     font-size: 2rem;
   }
-
-  .hint-chose.title,.ans {
+  .hint-chose.title, .ans {
     font-size: 1.5rem;
   }
-
   .hint-chose.confirmHint {
     width: 80%;
     margin-left: 10%;
     transform: none;
   }
-
   .hint-chose.oneoftwo .card-slot {
     font-size: 1.5rem;
   }
-
   .checkHint {
     font-size: 1.5rem;
   }
-
   .guide-carousel {
     height: auto;
     padding: 1rem;
     margin-top: 2rem;
   }
-
   .guide-slide {
     margin-top: 2rem;
     font-size: 1.2rem;
     line-height: 1.5rem;
   }
-
-  .hint-area {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 0.5rem;
-  }
-
-  .hint-area .card-slot {
-    width: 80px;
-    height: 120px;
-  }
-
   .showAns {
     font-size: 1.5rem;
     padding: 0.7rem 1rem;
   }
-
   .carousel-btn {
     font-size: 1.5rem;
   }
-
   .carousel-dots span {
     width: 10px;
     height: 10px;
   }
-
-  .question-section{
-    flex-direction:column;
-  }
-  
-  .question-box{
-    width:100%;
-  }
-  
-}
-/*  過關結算 */
-.pop-up{
-  display:flex;
-  height:95vh;
-  width:95vw;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  animation:fadeIn 0.5s ease forwards;
-  font-size:0px;
-}
-.score-area{
-  font-size:1.5rem;
 }
 
-.score-board{
-  background-color: #E9B44C;
-  width:65vw;
-  max-width:500px;
-  padding:20px;
-  border-radius: 5px;
+/* ===================== 過關結算 ===================== */
+.pop-up {
+  display: flex;
+  height: 95vh;
+  width: 95vw;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  animation: fadeIn 0.5s ease forwards;
+  font-size: 0px;
 }
 
-.box-title{
-  font-size:2rem;
-  color:#333333;
-  font-weight: bold;
+.score-area {
+  font-size: 1.5rem;
+  color: var(--text);
+  text-align: center;
+}
+
+.score-area > div:first-child {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-shadow: 0 0 24px rgba(255, 215, 0, 0.55);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.1em;
+}
+
+.score-board {
+  background-color: var(--surface);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  width: 65vw;
+  max-width: 500px;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.12), 0 24px 60px rgba(0, 0, 0, 0.7);
+}
+
+.box-title {
+  font-size: 2rem;
+  color: var(--text);
+  font-weight: 700;
   text-align: center;
   margin-bottom: 20px;
 }
 
-
-.score-board div{
-  font-size:1.5rem;
-  margin-bottom:10px;
-  color:#404442;
-  display: flex; 
+.score-board div {
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  color: var(--text);
+  display: flex;
   justify-content: space-between;
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: 12px;
 }
 
-
-.score-board ul{
-  padding:0px;
+.score-board div span {
+  color: var(--green);
+  font-weight: 600;
+  text-shadow: 0 0 14px rgba(57, 255, 20, 0.45);
 }
-.score-restart{
-  display:block;
-  margin:30px 0px;
-  text-align:center;
+
+.score-board ul {
+  padding: 0px;
+}
+
+.score-restart {
+  display: block;
+  margin: 30px auto 6px;
+  text-align: center;
   border-radius: 30px;
-  
-  border:solid 1px black; 
-  padding: 10px 20px;
-  font-size: 1.2rem;
-  background-color: white;
+  border: 1px solid rgba(57, 255, 20, 0.5);
+  padding: 12px 28px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  background-color: var(--surface);
+  color: var(--green);
   cursor: pointer;
   transition: all 0.3s ease;
   user-select: none;
-  padding-left:20px;
+  text-shadow: 0 0 12px rgba(57, 255, 20, 0.5);
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.18);
 }
 
-.score-restart:hover{
-  background-color: #f5f5f5;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+.score-restart:hover {
+  background-color: var(--surface-2);
+  box-shadow: 0 0 30px rgba(57, 255, 20, 0.45);
   transform: scale(1.03);
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
